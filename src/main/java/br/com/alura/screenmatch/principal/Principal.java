@@ -59,7 +59,7 @@ public class Principal {
 
 
         //top 5
-        System.out.println("Top 10 episodios");
+        System.out.println("\nTop 10 episodios");
         dadosEpisodios.stream()
                 .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
                 //.peek(e -> System.out.println("Primeiro filtro (N/A) " + e))
@@ -79,7 +79,7 @@ public class Principal {
 
         episodios.forEach(System.out::println);
 
-        System.out.println("Digite o nome do ep que deseja: ");
+        /*System.out.println("Digite o nome do ep que deseja: ");
         var filtro = leitura.nextLine();
         Optional<Episodio> episodioBuscado = episodios.stream()
                 .filter(e -> e.getTitulo().toUpperCase().contains(filtro.toUpperCase()))
@@ -92,7 +92,7 @@ public class Principal {
             System.out.println("Episodio não encontrado");
         }
 
-        /*System.out.println("A partir de qual ano você deseja ver os episodios: ");
+        System.out.println("A partir de qual ano você deseja ver os episodios: ");
         var ano = leitura.nextInt();
         leitura.nextLine();
 
@@ -106,5 +106,24 @@ public class Principal {
                                 " Episodio: " + e.getNumeroEpisodio() + " " + e.getTitulo() +
                                 " Data lançamento " + e.getDataDeLancamento().format(formatador)
                 ));*/
+
+        Map<Integer,Double> avaliacoesPorTemporada = episodios.stream()
+                .filter(e -> e.getAvaliacao() > 0.0)
+                .collect(Collectors.groupingBy(Episodio::getTemporada,
+                        Collectors.averagingDouble(Episodio::getAvaliacao)));
+        System.out.println("\nMedia por temporada: ");
+        System.out.println(avaliacoesPorTemporada);
+
+        DoubleSummaryStatistics est = episodios.stream()
+                .filter(e -> e.getAvaliacao() > 0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
+        System.out.println("\nEstatistica: ");
+        System.out.println(
+                "Média: " + est.getAverage() +
+                "\nMelhor episodio: " + est.getMax() +
+                "\nPior episodio: " + est.getMin() +
+                "\nQuantidade: " + est.getCount()
+        );
+
     }
 }
